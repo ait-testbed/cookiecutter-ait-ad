@@ -1,0 +1,51 @@
+name: Publish Docs
+
+on:
+  release:
+    types: [published]
+  push:
+    branches: [main, development]
+  workflow_dispatch:
+
+concurrency:
+  group: publish-docs
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "{{ cookiecutter.python_version }}"
+          enable-cache: true
+
+      - name: Install dependencies
+        run: uv sync --dev
+
+      - name: Configure Git user
+        run: |
+          git config --global user.name "{% raw %}${{ github.actor }}{% endraw %}"
+          git config --global user.email "{% raw %}${{ github.actor }}{% endraw %}@users.noreply.github.com"
+
+      - name: Deploy release docs
+        if: github.event_name == 'release'
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          echo "Deploying version $VERSION"
+          uv run mike deploy --push --update-aliases "$VERSION" latest
+          # run once per repo so the root URL redirects to latest:
+          # uv run mike set-default --push latest
+
+      - name: Deploy branch docs
+        if: github.event_name != 'release'
+        run: |
+          echo "Deploying docs for branch $GITHUB_REF_NAME"
+          uv run mike deploy --push --title "$GITHUB_REF_NAME (unreleased)" "$GITHUB_REF_NAME"

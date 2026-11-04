@@ -1,0 +1,29 @@
+site_name: "{{ cookiecutter.project_name }}"
+site_url: https://{{ cookiecutter.github_org }}.github.io/{{ cookiecutter.repo_name }}/
+repo_url: https://github.com/{{ cookiecutter.github_org }}/{{ cookiecutter.repo_name }}
+
+theme:
+  name: readthedocs
+
+extra:
+  version:
+    provider: mike
+
+nav:
+  - Home: index.md
+  - User Guide:
+    - Installation: installation.md
+    - Configuration: configuration.md
+    - Usage: usage.md
+  - Contributing:
+    - Git Workflow: contribution.md
+    - Development: development.md
+  - Maintainers:
+    - Release Process: release.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+  - pymdownx.superfences

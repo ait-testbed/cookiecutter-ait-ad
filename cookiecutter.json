@@ -1,0 +1,36 @@
+{
+    "project_name": "MyProject",
+    "description": "",
+    "repo_name": "{{ cookiecutter.project_name }}",
+    "github_org": "ait-testbed",
+    "dist_name": "{{ cookiecutter.project_name|lower }}",
+    "package_name": "{{ cookiecutter.dist_name|replace('-', '_') }}",
+    "use_cli": true,
+    "cli_name": "{{ cookiecutter.dist_name }}",
+    "python_version": ["3.14", "3.13", "3.12", "3.11", "3.10"],
+    "author_name": "aecid",
+    "author_email": "aecid@ait.ac.at",
+    "use_pypi": false,
+    "use_docker": false,
+    "__image_name": "{{ cookiecutter.github_org|lower }}/{{ cookiecutter.repo_name|lower }}",
+    "_supported_python_versions": ["3.10", "3.11", "3.12", "3.13", "3.14"],
+    "_copy_without_render": [
+        ".github/workflows/docker.yml",
+        ".github/workflows/recreate-development-branch.yml"
+    ],
+    "__prompts__": {
+        "project_name": "Display name",
+        "description": "One sentence description (required)",
+        "repo_name": "GitHub repository name",
+        "github_org": "GitHub organisation",
+        "dist_name": "PyPI distribution name",
+        "package_name": "Python import name",
+        "use_cli": "Add a command line interface?",
+        "cli_name": "Console script name (ignored without a CLI)",
+        "python_version": "Minimum Python version",
+        "author_name": "Author name",
+        "author_email": "Author email",
+        "use_pypi": "Publish to PyPI on release?",
+        "use_docker": "Build and publish a Docker image on release?"
+    }
+}

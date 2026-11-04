@@ -1,0 +1,44 @@
+name: Python application
+
+on:
+  push:
+    branches: [ "main", "development" ]
+  pull_request:
+    branches: [ "main", "development" ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: {% raw %}${{ github.workflow }}-${{ github.ref }}{% endraw %}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+{%- for v in cookiecutter._supported_python_versions if v.split('.')[1]|int >= cookiecutter.python_version.split('.')[1]|int %}
+          - "{{ v }}"
+{%- endfor %}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up uv (Python {% raw %}${{ matrix.python-version }}{% endraw %})
+      uses: astral-sh/setup-uv@v6
+      with:
+        python-version: {% raw %}${{ matrix.python-version }}{% endraw %}
+        activate-environment: true
+        enable-cache: true
+
+    - name: Check lockfile is up to date
+      run: uv lock --check
+
+    - name: Run pre-commit with prek
+      run: uv run --dev prek run -a
+
+    - name: Test with pytest
+      run: uv run --dev pytest -n auto --cov --cov-report=term-missing

@@ -1,0 +1,20 @@
+# Exclude everything by default, then explicitly allow what the
+# Dockerfile actually COPYs. Keeps the build context small.
+*
+
+!pyproject.toml
+!uv.lock
+!README.md
+!LICENSE.md
+!src
+!src/**
+
+# Never include, even if a rule above would match.
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+.venv/
+.git/
+.github/
